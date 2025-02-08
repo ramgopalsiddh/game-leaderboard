@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Table, Float
 from sqlalchemy.orm import relationship
 from database import Base
 from datetime import datetime
@@ -25,6 +25,7 @@ class Game(Base):
     end_time = Column(DateTime, nullable=True)
     upvotes = Column(Integer, default=0)
     contestants = relationship("Contestant", secondary=game_contestants, backref="games")
+    popularity_score = Column(Float, default=0)
 
 class Score(Base):
     __tablename__ = "scores"

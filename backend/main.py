@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import engine, get_db
-from models import Base
+from models import Base, Game
 import crud
 from pydantic import BaseModel
 
@@ -39,7 +39,18 @@ def end_game(game_id: int, db: Session = Depends(get_db)):
     game = crud.end_game(db, game_id)
     if not game:
         raise HTTPException(status_code=404, detail="Game not found")
-    return {"message": f"Game {game_id} ended"}
+    return {"message": f"Game {game_id} ended, ended at {game.end_time}"}
+
+@app.post("/games/{game_id}/upvote")
+def upvote_game(game_id: int, db: Session = Depends(get_db)):
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if game:
+        game.upvotes += 1
+        db.commit()
+        db.refresh(game)
+        return {"message": "Game upvoted"}
+    raise HTTPException(status_code=404, detail="Game not found")
+
 
 class ScoreCreate(BaseModel):
     game_id: int
@@ -53,6 +64,13 @@ def assign_score(score_data: ScoreCreate, db: Session = Depends(get_db)):
 @app.get("/leaderboard/")
 def get_leaderboard(game_id: int = None, db: Session = Depends(get_db)):
     return crud.get_leaderboard(db, game_id)
+
+@app.get("/popularity/")
+def get_popularity(db: Session = Depends(get_db)):
+    results = db.query(Game.id, Game.name, Game.popularity_score).order_by(Game.popularity_score.desc()).all()
+
+    games = [{"id": game.id, "name": game.name, "popularity_score": game.popularity_score} for game in results]
+    return games
 
 @app.get("/")
 def root():
