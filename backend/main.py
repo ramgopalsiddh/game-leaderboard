@@ -1,13 +1,44 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from database import engine, get_db
+from database import engine, get_db, SessionLocal
 from models import Base, Game
 import crud
 from pydantic import BaseModel
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
+from contextlib import asynccontextmanager
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+# Start and stop the scheduler when FastAPI app starts
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    scheduler.start()
+    yield
+    scheduler.shutdown()
+
+app = FastAPI(lifespan=lifespan)
+
+scheduler = BackgroundScheduler()
+
+# background job
+def refresh_popularity():
+    db = SessionLocal() 
+    crud.update_popularity_score(db)
+    db.close()
+
+# Schedule the job to run
+scheduler.add_job(refresh_popularity, "interval", minutes=5)
+
+# logging for job execution
+def job_listener(event):
+    if event.exception:
+        print(f"Refresh Popularity Score Job {event.job_id} failed")
+    else:
+        print(f" Refresh Popularity Score Job {event.job_id} completed")
+
+# Listen to job events
+scheduler.add_listener(job_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
 # Routes
 class ContestantCreate(BaseModel):
