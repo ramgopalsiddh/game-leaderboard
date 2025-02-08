@@ -49,6 +49,27 @@ class ContestantCreate(BaseModel):
 def create_contestant(contestant: ContestantCreate, db: Session = Depends(get_db)):
     return crud.create_contestant(db, contestant.name, contestant.email)
 
+class ContestantUpdate(BaseModel):
+    name: str
+    email: str
+
+@app.put("/contestants/{contestant_id}")
+def update_contestant_endpoint(contestant_id: int, contestant: ContestantUpdate, db: Session = Depends(get_db)):
+    updated_contestant = crud.update_contestant(db, contestant_id, contestant.name, contestant.email)
+    if not updated_contestant:
+        raise HTTPException(status_code=404, detail="Contestant not found")
+    return { "message": "Contestant updated successfully", 
+            "updated_contestant": {"id": updated_contestant.id, "name": updated_contestant.name, "email": updated_contestant.email}}
+
+
+@app.delete("/contestants/{contestant_id}")
+def delete_contestant_endpoint(contestant_id: int, db: Session = Depends(get_db)):
+    success = crud.delete_contestant(db, contestant_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Contestant not found")
+    return {"message": "Contestant deleted successfully"}
+
+
 class GameCreate(BaseModel):
     name: str
     description: str = ""

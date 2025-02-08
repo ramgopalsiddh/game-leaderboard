@@ -10,6 +10,23 @@ def create_contestant(db: Session, name: str, email: str):
     db.refresh(new_contestant)
     return new_contestant
 
+def update_contestant(db: Session, contestant_id: int, name: str, email: str):
+    contestant = db.query(Contestant).filter(Contestant.id == contestant_id).first()
+    if contestant:
+        contestant.name = name
+        contestant.email = email
+        db.commit()
+        return contestant
+    return None
+
+def delete_contestant(db: Session, contestant_id: int):
+    contestant = db.query(Contestant).filter(Contestant.id == contestant_id).first()
+    if contestant:
+        db.delete(contestant)
+        db.commit()
+        return True
+    return False
+
 def create_game(db: Session, name: str, description: str = ""):
     new_game = Game(name=name, description=description)
     db.add(new_game)
