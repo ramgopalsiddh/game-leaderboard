@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from models import game_contestants, Contestant, Game, Score
 from datetime import datetime, timedelta
 
@@ -137,11 +137,52 @@ def assign_score(db: Session, game_id: int, contestant_id: int, score: int):
     
     return new_score
 
-def get_leaderboard(db: Session, game_id: int = None):
-    query = db.query(Score)
+def get_leaderboard(db: Session, game_id: int = None, date: str = None):
+    query = (
+        db.query(
+            Score.contestant_id,
+            Contestant.name,
+            func.sum(Score.score).label("total_score")
+        )
+        .join(Contestant, Score.contestant_id == Contestant.id)
+        .group_by(Score.contestant_id, Contestant.name)
+        .order_by(func.sum(Score.score).desc())
+    )
+
     if game_id:
         query = query.filter(Score.game_id == game_id)
-    return query.order_by(Score.score.desc()).all()
+
+    if date:
+        # Ensure we extract just the date part of the timestamp
+        query = query.filter(func.date(Score.timestamp) == date)
+
+    results = query.all()
+
+    return [
+        {"contestant_id": r[0], "name": r[1], "total_score": r[2]}
+        for r in results
+    ]
+
+
+
+def get_global_leaderboard(db: Session):
+    results = (
+        db.query(
+            Score.contestant_id,
+            Contestant.name,
+            func.sum(Score.score).label("total_score")
+        )
+        .join(Contestant, Score.contestant_id == Contestant.id)
+        .group_by(Score.contestant_id, Contestant.name)
+        .order_by(desc("total_score"))
+        .all()
+    )
+
+    return [
+        {"contestant_id": r[0], "name": r[1], "total_score": r[2]}
+        for r in results
+    ]
+
 
 def update_popularity_score(db: Session):
     yesterday = datetime.now() - timedelta(days=1)
