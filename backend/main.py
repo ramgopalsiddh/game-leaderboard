@@ -98,10 +98,14 @@ class GameCreate(BaseModel):
     name: str
     description: str = ""
 
-@app.post("/games/")
+@app.post("/games")
 def create_game(game: GameCreate, db: Session = Depends(get_db)):
     return crud.create_game(db, game.name, game.description)
 
+@app.get("/games")
+def get_games(db: Session = Depends(get_db)):
+    games = db.query(Game).all()
+    return games
 
 @app.post("/games/{game_id}/start")
 def start_game(game_id: int, db: Session = Depends(get_db)):
@@ -128,11 +132,28 @@ def end_game(game_id: int, db: Session = Depends(get_db)):
 def upvote_game(game_id: int, db: Session = Depends(get_db)):
     game = db.query(Game).filter(Game.id == game_id).first()
     if game:
+        if not game.start_time:
+            raise HTTPException(status_code=400, detail="Game has not started yet")
+        
+        if game.end_time:
+            raise HTTPException(status_code=400, detail="Game has ended, cannot upvote")
+        
         game.upvotes += 1
         db.commit()
         db.refresh(game)
         return {"message": "Game upvoted"}
+    
     raise HTTPException(status_code=404, detail="Game not found")
+
+
+
+@app.get("/games/{game_id}")
+def get_game_details(game_id: int, db: Session = Depends(get_db)):
+    game_details = crud.get_game_details(db, game_id)
+    if not game_details:
+        raise HTTPException(status_code=404, detail="Game not found")
+    return game_details
+
 
 @app.post("/games/{game_id}/contestants/{contestant_id}/enter")
 def enter_game(game_id: int, contestant_id: int, db: Session = Depends(get_db)):

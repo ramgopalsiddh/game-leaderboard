@@ -58,6 +58,23 @@ def end_game(db: Session, game_id: int):
     db.refresh(game)
     return game
 
+def get_game_details(db: Session, game_id: int):
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game:
+        return None
+
+    game_details = {
+        "id": game.id,
+        "name": game.name,
+        "description": game.description,
+        "start_time": game.start_time,
+        "end_time": game.end_time,
+        "upvotes": game.upvotes,
+        "popularity_score": game.popularity_score,
+        "contestants": [{"id": c.id, "name": c.name} for c in game.contestants]
+    }
+    return game_details
+
 
 def enter_game(db: Session, game_id: int, contestant_id: int):
     game = db.query(Game).filter(Game.id == game_id).first()
