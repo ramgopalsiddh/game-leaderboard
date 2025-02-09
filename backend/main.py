@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import engine, get_db, SessionLocal
-from models import Base, Game, Contestant
+from models import Base, Game, Contestant, game_contestants
 import crud
 from pydantic import BaseModel
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -106,6 +106,18 @@ def create_game(game: GameCreate, db: Session = Depends(get_db)):
 def get_games(db: Session = Depends(get_db)):
     games = db.query(Game).all()
     return games
+
+@app.get("/games/active")
+def get_active_games(db: Session = Depends(get_db)):
+    # Fetch active games (start_time is not None, end_time is None)
+    active_games = db.query(Game).filter(Game.start_time.isnot(None), Game.end_time.is_(None)).all()
+
+    # Fetch contestants for each active game
+    for game in active_games:
+        game.contestants = db.query(Contestant).join(game_contestants).filter(game_contestants.c.game_id == game.id).all()
+
+    return active_games
+
 
 @app.post("/games/{game_id}/start")
 def start_game(game_id: int, db: Session = Depends(get_db)):
