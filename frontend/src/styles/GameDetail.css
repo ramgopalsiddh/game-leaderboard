@@ -1,0 +1,103 @@
+.game-detail-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f4f7fc;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 2% auto;
+    font-weight: bolder;
+  }
+  
+  .game-detail-header {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .game-detail-description {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #555;
+  }
+  
+  .game-detail-info {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .game-contestant-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .game-contestant-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .game-contestant-item input {
+    padding: 5px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .game-contestant-item button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .game-contestant-item button:hover {
+    background-color: #0056b3;
+  }
+  
+  .game-action-buttons {
+    margin-top: 20px;
+  }
+  
+  .game-action-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #28a745;
+    color: white;
+    margin-right: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+  }
+  
+  button.game-action-buttons button:hover {
+    background-color: #218838;
+  }
+  
+  button.game-upvote-button {
+    background-color: #ffc107;
+  }
+  
+  button.game-upvote-button:hover {
+    background-color: #e0a800;
+  }
+  
+  button.game-end-button {
+    background-color: #dc3545;
+  }
+  
+  button.game-end-button:hover {
+    background-color: #c82333;
+  }
+  

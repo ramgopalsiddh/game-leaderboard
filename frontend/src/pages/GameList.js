@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import '../styles/GameList.css';
 
 const GameList = () => {
   const [games, setGames] = useState([]);
@@ -17,15 +18,21 @@ const GameList = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Game List</h1>
-      <ul>
-        {games.map((game) => (
-          <li key={game.id}>
-            <Link to={`/games/${game.id}`}>{game.name}</Link>
-          </li>
-        ))}
-      </ul>
+    <div className="container">
+      <div className="gamelist-list-container">
+        <h1 className="header">Game List</h1>
+        <ul className="gamelist-list">
+          {games.map((game) => (
+            <li key={game.id} className="gamelist-item">
+              <Link to={`/games/${game.id}`} className="gamelist-link">
+                <div className="gamelist-item-content">
+                  <h2>{game.name}</h2>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";  // Use useNavigate instead of useHistory
+import { useNavigate } from "react-router-dom";
+import '../styles/AddGame.css';
 
 const AddGame = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const navigate = useNavigate();  // Initialize navigate
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,35 +14,39 @@ const AddGame = () => {
 
     try {
       await axios.post("http://localhost:8000/games/", newGame);
-      navigate("/games");  // Use navigate to redirect after successful submission
+      navigate("/games");
     } catch (error) {
       console.error("Error adding game:", error);
     }
   };
 
   return (
-    <div>
-      <h1>Add New Game</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name:</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Description:</label>
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
-        <button type="submit">Add Game</button>
-      </form>
+    <div className="addgamecontainer">
+      <div className="form-container">
+        <h1 className="header">Add New Game</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Name:</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="input-field"
+            />
+          </div>
+          <div className="form-group">
+            <label>Description:</label>
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="input-field"
+            />
+          </div>
+          <button type="submit" className="submit-button">Add Game</button>
+        </form>
+      </div>
     </div>
   );
 };

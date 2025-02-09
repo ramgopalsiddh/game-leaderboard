@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import '../styles/GameDetail.css';
 
 const GameDetail = () => {
-  const { gameId } = useParams();  // Get gameId from the URL
+  const { gameId } = useParams();
   const [game, setGame] = useState(null);
   const [scoreData, setScoreData] = useState({});
 
@@ -78,15 +79,15 @@ const GameDetail = () => {
   if (!game) return <div>Loading...</div>;
 
   return (
-    <div>
-      <h1>{game.name}</h1>
-      <p>{game.description}</p>
-      <p>Upvotes: {game.upvotes}</p>
-      <p>Popularity Score: {game.popularity_score}</p>
-      <p>Contestants:</p>
-      <ul>
+    <div className="game-detail-container">
+      <h1 className="game-detail-header">{game.name}</h1>
+      <p className="game-detail-description">{game.description}</p>
+      <p className="game-detail-info">Upvotes: {game.upvotes}</p>
+      <p className="game-detail-info">Popularity Score: {game.popularity_score}</p>
+      <p className="game-detail-info">Contestants:</p>
+      <ul className="game-contestant-list">
         {game.contestants.map((contestant) => (
-          <li key={contestant.id}>
+          <li key={contestant.id} className="game-contestant-item">
             {contestant.name}
             {game.start_time && !game.end_time && (
               <div>
@@ -105,20 +106,22 @@ const GameDetail = () => {
         ))}
       </ul>
 
-      {game.start_time ? (
-        <div>
-          {game.end_time ? (
-            <p>Game has ended</p>
-          ) : (
-            <>
-              <button onClick={handleEndGame}>End Game</button>
-              <button onClick={handleUpvote}>Upvote Game</button>
-            </>
-          )}
-        </div>
-      ) : (
-        <button onClick={handleStartGame}>Start Game</button>
-      )}
+      <div className="game-action-buttons">
+        {game.start_time ? (
+          <>
+            {game.end_time ? (
+              <p className="game-status">Game has ended</p>
+            ) : (
+              <>
+                <button className="game-end-button" onClick={handleEndGame}>End Game</button>  {/* Apply new class */}
+                <button className="game-upvote-button" onClick={handleUpvote}>Upvote Game</button>
+              </>
+            )}
+          </>
+        ) : (
+          <button onClick={handleStartGame}>Start Game</button>
+        )}
+      </div>
     </div>
   );
 };
