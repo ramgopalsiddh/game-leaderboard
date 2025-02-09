@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import '../styles/ContestantDetail.css';
 
 function ContestantDetail() {
   const { id } = useParams();
@@ -62,38 +63,40 @@ function ContestantDetail() {
   if (!contestant) return <div>Contestant not found</div>;
 
   return (
-    <div>
-      <h2>{contestant.name}</h2>
-      <p>Email: {contestant.email}</p>
+    <div className="detailcontainer">
+      <div className="detail-container">
+        <h2 className="header">{contestant.name}</h2>
+        <p className="email">Email: {contestant.email}</p>
 
-      <h3>Active Games</h3>
-      {games.length === 0 ? (
-        <p>No active games available</p>
-      ) : (
-        <ul>
-          {games.map((game) => {
-            const isInGame = Array.isArray(game.contestants) && game.contestants.some(
-              (contestant) => contestant.id === parseInt(id)
-            );
+        <h3>Active Games</h3>
+        {games.length === 0 ? (
+          <p>No active games available</p>
+        ) : (
+          <ul className="game-list">
+            {games.map((game) => {
+              const isInGame = Array.isArray(game.contestants) && game.contestants.some(
+                (contestant) => contestant.id === parseInt(id)
+              );
 
-            return (
-              <li key={game.id}>
-                <h4>{game.name}</h4>
-                <p>{game.description}</p>
-                <p>Upvotes: {game.upvotes}</p>
-                <p>Popularity Score: {game.popularity_score}</p>
+              return (
+                <li key={game.id} className="game-item">
+                  <h4>{game.name}</h4>
+                  <p>{game.description}</p>
+                  <p>Upvotes: {game.upvotes}</p>
+                  <p>Popularity Score: {game.popularity_score}</p>
 
-                {/* Show "Exit Game" if the contestant is already in the game */}
-                {isInGame ? (
-                  <button onClick={() => handleExitGame(game.id)}>Exit Game</button>
-                ) : (
-                  <button onClick={() => handleEnterGame(game.id)}>Enter Game</button>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      )}
+                  {/* Show "Exit Game" if the contestant is already in the game */}
+                  {isInGame ? (
+                    <button onClick={() => handleExitGame(game.id)} className="exit-button">Exit Game</button>
+                  ) : (
+                    <button onClick={() => handleEnterGame(game.id)} className="enter-button">Enter Game</button>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

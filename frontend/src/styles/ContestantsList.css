@@ -1,0 +1,60 @@
+
+.listcontainer {
+    margin: 20px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .header {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin: 10px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .table {
+    width: 70%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border: 1px solid #ddd; 
+  }
+  
+  .tableHeader {
+    background-color: #f2f2f2;
+    padding: 10px;
+    text-align: left;
+    font-weight: bold;
+    border: 1px solid #ddd;
+  }
+  
+  .tableCell {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+  
+  .link {
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  .deleteButton {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    margin-left: 10px;
+  }
+  

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import "../styles/EditContestant.css"; 
 
 function EditContestant() {
   const { contestantId } = useParams();
@@ -31,10 +32,10 @@ function EditContestant() {
   };
 
   return (
-    <div>
-      <h2>Edit Contestant</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
+    <div className="editcontainer">
+      <h2 className="header">Edit Contestant</h2>
+      <form onSubmit={handleSubmit} className="form">
+        <div className="form-group">
           <label>Name</label>
           <input
             type="text"
@@ -43,7 +44,7 @@ function EditContestant() {
             onChange={handleInputChange}
           />
         </div>
-        <div>
+        <div className="form-group">
           <label>Email</label>
           <input
             type="email"

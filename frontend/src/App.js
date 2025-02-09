@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import ContestantCreate from './pages/ContestantCreate';
 import EditContestant from './pages/EditContestant';
 import ContestantsList from './pages/ContestantsList';
@@ -7,9 +7,10 @@ import GameList from './pages/GameList';
 import AddGame from './pages/AddGame';
 import GameDetail from "./pages/GameDetail";
 import ContestantDetail from "./pages/ContestantDetail";
-import GlobalLeaderboard from './pages/GlobalLeaderboard';  // Import GlobalLeaderboard page
-import GameDateLeaderboard from './pages/GameDateLeaderboard';  // Import GameDateLeaderboard page
-import PopularityPage from './pages/PopularityPage';  // Import PopularityPage page
+import GlobalLeaderboard from './pages/GlobalLeaderboard';
+import GameDateLeaderboard from './pages/GameDateLeaderboard';
+import PopularityPage from './pages/PopularityPage';
+import './App.css';
 
 const App = () => {
   return (
@@ -17,30 +18,30 @@ const App = () => {
       <div>
         <h1>Game Leaderboard & Contestants</h1>
         <nav>
-          <ul>
-            <li>
-              <a href="/contestants">All Contestants</a>
-            </li>
-            <li>
-              <a href="/contestants/create">Add Contestant</a>
-            </li>
-            <li>
-              <a href="/games">All Games</a>
-            </li>
-            <li>
-              <a href="/games/add">Add Game</a>
-            </li>
-            {/* New Links for Leaderboard & Popularity */}
-            <li>
-              <a href="/global-leaderboard">Global Leaderboard</a>
-            </li>
-            <li>
-              <a href="/game-date-leaderboard">Game + Date Leaderboard</a>
-            </li>
-            <li>
-              <a href="/popularity">Game Popularity</a>
-            </li>
-          </ul>
+          <div>
+            <button className="button-link">
+              <Link to="/contestants" className="link-style">All Contestants</Link>
+            </button>
+            <button className="button-link">
+              <Link to="/contestants/create" className="link-style">Add Contestant</Link>
+            </button>
+            <button className="button-link">
+              <Link to="/games" className="link-style">All Games</Link>
+            </button>
+            <button className="button-link">
+              <Link to="/games/add" className="link-style">Add Game</Link>
+            </button>
+            
+            <button className="button-link">
+              <Link to="/global-leaderboard" className="link-style">Global Leaderboard</Link>
+            </button>
+            <button className="button-link">
+              <Link to="/game-date-leaderboard" className="link-style">Game + Date Leaderboard</Link>
+            </button>
+            <button className="button-link">
+              <Link to="/popularity" className="link-style">Game Popularity</Link>
+            </button>
+          </div>
         </nav>
 
         <Routes>

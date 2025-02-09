@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import "../styles/ContestantsList.css";
 
 function ContestantsList() {
   const [contestants, setContestants] = useState([]);
@@ -26,33 +27,41 @@ function ContestantsList() {
   };
 
   return (
-    <div>
-      <h2>Contestants List</h2>
+    <div className="listcontainer">
+      <h2 className="header">Contestants List</h2>
       <Link to="/contestants/create">
-        <button>Create Contestant</button>
+        <button className="button">Create Contestant</button>
       </Link>
-      <table>
+      <table className="table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
+            <th className="tableHeader">Name</th>
+            <th className="tableHeader">Email</th>
+            <th className="tableHeader">Actions</th>
           </tr>
         </thead>
         <tbody>
           {contestants.map((contestant) => (
             <tr key={contestant.id}>
-              <td>
-                <Link to={`/contestants/${contestant.id}`}>
+              <td className="tableCell">
+                <Link to={`/contestants/${contestant.id}`} className="link">
                   {contestant.name}
                 </Link>
               </td>
-              <td>{contestant.email}</td>
-              <td>
-                <Link to={`/contestants/update/${contestant.id}`}>
-                  <button>Edit</button>
+              <td className="tableCell">{contestant.email}</td>
+              <td className="tableCell">
+                <Link to={`/contestants/${contestant.id}`}>
+                  <button className="button">Show</button>
                 </Link>
-                <button onClick={() => deleteContestant(contestant.id)}>Delete</button>
+                <Link to={`/contestants/update/${contestant.id}`}>
+                  <button className="button">Edit</button>
+                </Link>
+                <button
+                  onClick={() => deleteContestant(contestant.id)}
+                  className="deleteButton"
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
