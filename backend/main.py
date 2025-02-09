@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import engine, get_db, SessionLocal
-from models import Base, Game
+from models import Base, Game, Contestant
 import crud
 from pydantic import BaseModel
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -20,6 +21,15 @@ async def lifespan(app: FastAPI):
     scheduler.shutdown()
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # background job
 def refresh_popularity():
@@ -41,6 +51,20 @@ def job_listener(event):
 scheduler.add_listener(job_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
 # Routes
+
+@app.get("/allcontestants")
+def get_contestants(db: Session = Depends(get_db)):
+    contestants = db.query(Contestant).all()
+    return contestants
+
+@app.get("/contestants/{contestant_id}")
+def get_contestant(contestant_id: int, db: Session = Depends(get_db)):
+    contestant = db.query(Contestant).filter(Contestant.id == contestant_id).first()
+    if not contestant:
+        raise HTTPException(status_code=404, detail="Contestant not found")
+    return contestant
+
+
 class ContestantCreate(BaseModel):
     name: str
     email: str
