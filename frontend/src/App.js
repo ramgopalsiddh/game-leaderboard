@@ -6,6 +6,7 @@ import ContestantsList from './pages/ContestantsList';
 import GameList from './pages/GameList';
 import AddGame from './pages/AddGame';
 import GameDetail from "./pages/GameDetail";
+import ContestantDetail from "./pages/ContestantDetail";
 
 const App = () => {
   return (
@@ -34,6 +35,7 @@ const App = () => {
           <Route path="/contestants" element={<ContestantsList />} />
           <Route path="/contestants/create" element={<ContestantCreate />} />
           <Route path="/contestants/update/:contestantId" element={<EditContestant />} />
+          <Route path="/contestants/:id" element={<ContestantDetail />} />
 
           {/* Game Routes */}
           <Route path="/games" element={<GameList />} />

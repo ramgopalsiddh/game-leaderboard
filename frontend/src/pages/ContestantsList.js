@@ -42,7 +42,11 @@ function ContestantsList() {
         <tbody>
           {contestants.map((contestant) => (
             <tr key={contestant.id}>
-              <td>{contestant.name}</td>
+              <td>
+                <Link to={`/contestants/${contestant.id}`}>
+                  {contestant.name}
+                </Link>
+              </td>
               <td>{contestant.email}</td>
               <td>
                 <Link to={`/contestants/update/${contestant.id}`}>
