@@ -50,6 +50,33 @@ def end_game(db: Session, game_id: int):
         return game
     return None
 
+def enter_game(db: Session, game_id: int, contestant_id: int):
+    # Find the game and contestant
+    game = db.query(Game).filter(Game.id == game_id).first()
+    contestant = db.query(Contestant).filter(Contestant.id == contestant_id).first()
+    
+    if game and contestant:
+        # Add contestant to the game
+        game.contestants.append(contestant)
+        db.commit()
+        db.refresh(game)
+        return {"message": f"Contestant {contestant.name} entered the game {game.name}"}
+    return None
+
+def exit_game(db: Session, game_id: int, contestant_id: int):
+    # Find the game and contestant
+    game = db.query(Game).filter(Game.id == game_id).first()
+    contestant = db.query(Contestant).filter(Contestant.id == contestant_id).first()
+    
+    if game and contestant:
+        # Remove contestant from the game
+        game.contestants.remove(contestant)
+        db.commit()
+        db.refresh(game)
+        return {"message": f"Contestant {contestant.name} exited the game {game.name}"}
+    return None
+
+
 def assign_score(db: Session, game_id: int, contestant_id: int, score: int):
     new_score = Score(game_id=game_id, contestant_id=contestant_id, score=score)
     db.add(new_score)

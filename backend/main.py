@@ -103,6 +103,20 @@ def upvote_game(game_id: int, db: Session = Depends(get_db)):
         return {"message": "Game upvoted"}
     raise HTTPException(status_code=404, detail="Game not found")
 
+@app.post("/games/{game_id}/contestants/{contestant_id}/enter")
+def enter_game(game_id: int, contestant_id: int, db: Session = Depends(get_db)):
+    response = crud.enter_game(db, game_id, contestant_id)
+    if response is None:
+        raise HTTPException(status_code=404, detail="Game or Contestant not found")
+    return response
+
+@app.post("/games/{game_id}/contestants/{contestant_id}/exit")
+def exit_game(game_id: int, contestant_id: int, db: Session = Depends(get_db)):
+    response = crud.exit_game(db, game_id, contestant_id)
+    if response is None:
+        raise HTTPException(status_code=404, detail="Game or Contestant not found")
+    return response
+
 
 class ScoreCreate(BaseModel):
     game_id: int
