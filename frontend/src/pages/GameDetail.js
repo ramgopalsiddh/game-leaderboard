@@ -65,6 +65,16 @@ const GameDetail = () => {
       });
   };
 
+  const handleUpvote = () => {
+    axios.post(`http://localhost:8000/games/${gameId}/upvote`)
+      .then(response => {
+        setGame(prevGame => ({ ...prevGame, upvotes: prevGame.upvotes + 1 }));
+      })
+      .catch(error => {
+        console.error("There was an error upvoting the game!", error);
+      });
+  };
+
   if (!game) return <div>Loading...</div>;
 
   return (
@@ -102,6 +112,7 @@ const GameDetail = () => {
           ) : (
             <>
               <button onClick={handleEndGame}>End Game</button>
+              <button onClick={handleUpvote}>Upvote Game</button>
             </>
           )}
         </div>
