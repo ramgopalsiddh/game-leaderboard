@@ -203,8 +203,8 @@ def assign_score(score_data: ScoreCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/leaderboard/")
-def get_leaderboard_route(game_id: int = None, date: str = None, db: Session = Depends(get_db)):
-    return crud.get_leaderboard(db, game_id, date)
+def get_leaderboard_route(db: Session = Depends(get_db)):
+    return crud.get_leaderboard(db)
 
 
 @app.get("/leaderboard/global")

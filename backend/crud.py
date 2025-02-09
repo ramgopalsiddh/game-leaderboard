@@ -154,29 +154,29 @@ def assign_score(db: Session, game_id: int, contestant_id: int, score: int):
     
     return new_score
 
-def get_leaderboard(db: Session, game_id: int = None, date: str = None):
+def get_leaderboard(db: Session):
     query = (
         db.query(
-            Score.contestant_id,
+            Game.name.label('game_name'),  # Get the game name
+            func.date(Score.timestamp).label('date'),
             Contestant.name,
             func.sum(Score.score).label("total_score")
         )
         .join(Contestant, Score.contestant_id == Contestant.id)
-        .group_by(Score.contestant_id, Contestant.name)
-        .order_by(func.sum(Score.score).desc())
+        .join(Game, Score.game_id == Game.id)  # Join the Game table
+        .group_by(Game.name, func.date(Score.timestamp), Score.contestant_id, Contestant.name)
+        .order_by(Game.name, func.date(Score.timestamp), func.sum(Score.score).desc())
     )
-
-    if game_id:
-        query = query.filter(Score.game_id == game_id)
-
-    if date:
-        # Ensure we extract just the date part of the timestamp
-        query = query.filter(func.date(Score.timestamp) == date)
 
     results = query.all()
 
     return [
-        {"contestant_id": r[0], "name": r[1], "total_score": r[2]}
+        {
+            "game_name": r[0],
+            "date": r[1],
+            "name": r[2],
+            "total_score": r[3]
+        }
         for r in results
     ]
 
