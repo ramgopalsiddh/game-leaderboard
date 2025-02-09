@@ -36,55 +36,89 @@ def create_game(db: Session, name: str, description: str = ""):
 
 def start_game(db: Session, game_id: int):
     game = db.query(Game).filter(Game.id == game_id).first()
-    if game:
-        game.start_time = datetime.now()
-        db.commit()
+    if not game:
+        return None
+    if game.start_time:
+        raise ValueError("Game has already started")
+    game.start_time = datetime.now()
+    db.commit()
+    db.refresh(game)
     return game
 
 def end_game(db: Session, game_id: int):
     game = db.query(Game).filter(Game.id == game_id).first()
-    if game:
-        game.end_time = datetime.now()
-        db.commit()
-        db.refresh(game)
-        return game
-    return None
+    if not game:
+        return None
+    if not game.start_time:
+        raise ValueError("Game has not started yet")
+    if game.end_time:
+        raise ValueError("Game has already ended")
+    game.end_time = datetime.now()
+    db.commit()
+    db.refresh(game)
+    return game
+
 
 def enter_game(db: Session, game_id: int, contestant_id: int):
-    # Find the game and contestant
     game = db.query(Game).filter(Game.id == game_id).first()
     contestant = db.query(Contestant).filter(Contestant.id == contestant_id).first()
-    
-    if game and contestant:
-        # Add contestant to the game
-        game.contestants.append(contestant)
-        db.commit()
-        db.refresh(game)
-        return {"message": f"Contestant {contestant.name} entered the game {game.name}"}
-    return None
+
+    if not game or not contestant:
+        return None
+
+    # Check if contestant is already in the game
+    in_game = db.execute(
+        game_contestants.select().where(
+            (game_contestants.c.game_id == game_id) & 
+            (game_contestants.c.contestant_id == contestant_id)
+        )
+    ).fetchone()
+
+    if in_game:
+        raise ValueError("Contestant is already in the game")
+
+    db.execute(game_contestants.insert().values(game_id=game_id, contestant_id=contestant_id))
+    db.commit()
+    return {"message": f"Contestant {contestant.name} entered the game {game.name}"}
 
 def exit_game(db: Session, game_id: int, contestant_id: int):
-    # Find the game and contestant
     game = db.query(Game).filter(Game.id == game_id).first()
     contestant = db.query(Contestant).filter(Contestant.id == contestant_id).first()
-    
-    if game and contestant:
-        # Remove contestant from the game
-        game.contestants.remove(contestant)
-        db.commit()
-        db.refresh(game)
-        return {"message": f"Contestant {contestant.name} exited the game {game.name}"}
-    return None
+
+    if not game or not contestant:
+        return None
+
+    in_game = db.execute(
+        game_contestants.select().where(
+            (game_contestants.c.game_id == game_id) & 
+            (game_contestants.c.contestant_id == contestant_id)
+        )
+    ).fetchone()
+
+    if not in_game:
+        raise ValueError("Contestant is not in the game")
+
+    db.execute(game_contestants.delete().where(
+        (game_contestants.c.game_id == game_id) & 
+        (game_contestants.c.contestant_id == contestant_id)
+    ))
+    db.commit()
+    return {"message": f"Contestant {contestant.name} exited the game {game.name}"}
+
 
 
 def assign_score(db: Session, game_id: int, contestant_id: int, score: int):
     game = db.query(Game).filter(Game.id == game_id).first()
+    contestant = db.query(Contestant).filter(Contestant.id == contestant_id).first()
+
     if not game:
         raise ValueError("Game not found")
-
-    contestant = db.query(Contestant).filter(Contestant.id == contestant_id).first()
     if not contestant:
         raise ValueError("Contestant not found")
+    if not game.start_time:
+        raise ValueError("Game has not started")
+    if game.end_time:
+        raise ValueError("Game has already ended")
 
     in_game = db.execute(
         game_contestants.select().where(
@@ -110,14 +144,13 @@ def get_leaderboard(db: Session, game_id: int = None):
     return query.order_by(Score.score.desc()).all()
 
 def update_popularity_score(db: Session):
-    yesterday = datetime.utcnow() - timedelta(days=1)
-
-    # Dynamic calculations for max values
-    max_w1 = db.query(Score.game_id, Score.contestant_id).filter(Score.timestamp >= yesterday).distinct().count()
-    max_w2 = db.query(Score.game_id, Score.contestant_id).filter(Score.timestamp >= datetime.now()).distinct().count()
-    max_w3 = db.query(Game).with_entities(Game.id, func.max(Game.upvotes)).scalar()  # Max upvotes
-    max_w4 = db.query(Game).with_entities(Game.id, func.max(func.extract('epoch', Game.end_time) - func.extract('epoch', Game.start_time))).filter(Game.start_time >= yesterday).scalar()  # Max session length
-    max_w5 = db.query(Score.game_id).filter(Score.timestamp >= yesterday).distinct().count()  # Max number of sessions played
+    yesterday = datetime.now() - timedelta(days=1)
+    # Dynamic calculations for max values    
+    max_w1 = db.query(Score.game_id).filter(Score.timestamp >= yesterday).distinct().count()
+    max_w2 = db.query(Score.game_id).filter(Score.timestamp >= datetime.utcnow()).distinct().count()
+    max_w3 = db.query(func.max(Game.upvotes)).scalar() or 1
+    max_w4 = db.query(func.max(func.julianday(Game.end_time) - func.julianday(Game.start_time))).filter(Game.start_time >= yesterday).scalar() or 1
+    max_w5 = db.query(Score.game_id).filter(Score.timestamp >= yesterday).distinct().count() or 1
 
     # Loop through all games
     games = db.query(Game).all()
@@ -125,9 +158,9 @@ def update_popularity_score(db: Session):
     for game in games:
         # Calculate w1, w2, w3, w4, w5 for each game
         w1 = db.query(Score).filter(Score.game_id == game.id, Score.timestamp >= yesterday).count()
-        w2 = db.query(Score).filter(Score.game_id == game.id, Score.timestamp >= datetime.now()).count()
+        w2 = db.query(Score).filter(Score.game_id == game.id, Score.timestamp >= datetime.utcnow()).count()
         w3 = game.upvotes
-        w4 = (func.extract('epoch', game.end_time) - func.extract('epoch', game.start_time)) if game.start_time and game.end_time else 0
+        w4 = (db.query(func.julianday(game.end_time) - func.julianday(game.start_time)).scalar() or 0) if game.start_time and game.end_time else 0
         w5 = db.query(Score).filter(Score.game_id == game.id, Score.timestamp >= yesterday).count()
 
         # Normalize and calculate popularity score
@@ -138,5 +171,5 @@ def update_popularity_score(db: Session):
             0.15 * (w4 / max_w4 if max_w4 else 1) +
             0.1 * (w5 / max_w5 if max_w5 else 1)
         )
-        db.commit()
+    db.commit()
 

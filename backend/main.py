@@ -81,17 +81,24 @@ def create_game(game: GameCreate, db: Session = Depends(get_db)):
 
 @app.post("/games/{game_id}/start")
 def start_game(game_id: int, db: Session = Depends(get_db)):
-    game = crud.start_game(db, game_id)
-    if not game:
-        raise HTTPException(status_code=404, detail="Game not found")
-    return {"message": f"Game {game_id} started"}
+    try:
+        game = crud.start_game(db, game_id)
+        if not game:
+            raise HTTPException(status_code=404, detail="Game not found")
+        return {"message": f"Game {game_id} started"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 @app.post("/games/{game_id}/end")
 def end_game(game_id: int, db: Session = Depends(get_db)):
-    game = crud.end_game(db, game_id)
-    if not game:
-        raise HTTPException(status_code=404, detail="Game not found")
-    return {"message": f"Game {game_id} ended, ended at {game.end_time}"}
+    try:
+        game = crud.end_game(db, game_id)
+        if not game:
+            raise HTTPException(status_code=404, detail="Game not found")
+        return {"message": f"Game {game_id} ended at {game.end_time}"}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/games/{game_id}/upvote")
 def upvote_game(game_id: int, db: Session = Depends(get_db)):
@@ -105,17 +112,25 @@ def upvote_game(game_id: int, db: Session = Depends(get_db)):
 
 @app.post("/games/{game_id}/contestants/{contestant_id}/enter")
 def enter_game(game_id: int, contestant_id: int, db: Session = Depends(get_db)):
-    response = crud.enter_game(db, game_id, contestant_id)
-    if response is None:
-        raise HTTPException(status_code=404, detail="Game or Contestant not found")
-    return response
+    try:
+        response = crud.enter_game(db, game_id, contestant_id)
+        if response is None:
+            raise HTTPException(status_code=404, detail="Game or Contestant not found")
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 @app.post("/games/{game_id}/contestants/{contestant_id}/exit")
 def exit_game(game_id: int, contestant_id: int, db: Session = Depends(get_db)):
-    response = crud.exit_game(db, game_id, contestant_id)
-    if response is None:
-        raise HTTPException(status_code=404, detail="Game or Contestant not found")
-    return response
+    try:
+        response = crud.exit_game(db, game_id, contestant_id)
+        if response is None:
+            raise HTTPException(status_code=404, detail="Game or Contestant not found")
+        return response
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 
 class ScoreCreate(BaseModel):
