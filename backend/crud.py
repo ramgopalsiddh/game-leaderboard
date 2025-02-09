@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from models import Contestant, Game, Score
+from models import game_contestants, Contestant, Game, Score
 from datetime import datetime, timedelta
 
 def create_contestant(db: Session, name: str, email: str):
@@ -78,9 +78,29 @@ def exit_game(db: Session, game_id: int, contestant_id: int):
 
 
 def assign_score(db: Session, game_id: int, contestant_id: int, score: int):
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game:
+        raise ValueError("Game not found")
+
+    contestant = db.query(Contestant).filter(Contestant.id == contestant_id).first()
+    if not contestant:
+        raise ValueError("Contestant not found")
+
+    in_game = db.execute(
+        game_contestants.select().where(
+            (game_contestants.c.game_id == game_id) &
+            (game_contestants.c.contestant_id == contestant_id)
+        )
+    ).fetchone()
+
+    if not in_game:
+        raise ValueError("Contestant is not in the game and cannot receive a score.")
+
     new_score = Score(game_id=game_id, contestant_id=contestant_id, score=score)
     db.add(new_score)
     db.commit()
+    db.refresh(new_score)
+    
     return new_score
 
 def get_leaderboard(db: Session, game_id: int = None):

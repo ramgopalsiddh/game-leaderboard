@@ -11,6 +11,8 @@ from contextlib import asynccontextmanager
 Base.metadata.create_all(bind=engine)
 
 # Start and stop the scheduler when FastAPI app starts
+scheduler = BackgroundScheduler()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     scheduler.start()
@@ -18,8 +20,6 @@ async def lifespan(app: FastAPI):
     scheduler.shutdown()
 
 app = FastAPI(lifespan=lifespan)
-
-scheduler = BackgroundScheduler()
 
 # background job
 def refresh_popularity():
@@ -125,7 +125,10 @@ class ScoreCreate(BaseModel):
 
 @app.post("/scores/")
 def assign_score(score_data: ScoreCreate, db: Session = Depends(get_db)):
-    return crud.assign_score(db, score_data.game_id, score_data.contestant_id, score_data.score)
+    try:
+        return crud.assign_score(db, score_data.game_id, score_data.contestant_id, score_data.score)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/leaderboard/")
 def get_leaderboard(game_id: int = None, db: Session = Depends(get_db)):
