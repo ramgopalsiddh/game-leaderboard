@@ -7,6 +7,9 @@ import GameList from './pages/GameList';
 import AddGame from './pages/AddGame';
 import GameDetail from "./pages/GameDetail";
 import ContestantDetail from "./pages/ContestantDetail";
+import GlobalLeaderboard from './pages/GlobalLeaderboard';  // Import GlobalLeaderboard page
+import GameDateLeaderboard from './pages/GameDateLeaderboard';  // Import GameDateLeaderboard page
+import PopularityPage from './pages/PopularityPage';  // Import PopularityPage page
 
 const App = () => {
   return (
@@ -27,6 +30,16 @@ const App = () => {
             <li>
               <a href="/games/add">Add Game</a>
             </li>
+            {/* New Links for Leaderboard & Popularity */}
+            <li>
+              <a href="/global-leaderboard">Global Leaderboard</a>
+            </li>
+            <li>
+              <a href="/game-date-leaderboard">Game + Date Leaderboard</a>
+            </li>
+            <li>
+              <a href="/popularity">Game Popularity</a>
+            </li>
           </ul>
         </nav>
 
@@ -41,6 +54,11 @@ const App = () => {
           <Route path="/games" element={<GameList />} />
           <Route path="/games/:gameId" element={<GameDetail />} />
           <Route path="/games/add" element={<AddGame />} />
+
+          {/* New Routes for Leaderboards and Popularity */}
+          <Route path="/global-leaderboard" element={<GlobalLeaderboard />} />
+          <Route path="/game-date-leaderboard" element={<GameDateLeaderboard />} />
+          <Route path="/popularity" element={<PopularityPage />} />
         </Routes>
       </div>
     </Router>
