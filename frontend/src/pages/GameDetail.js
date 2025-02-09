@@ -5,6 +5,7 @@ import axios from "axios";
 const GameDetail = () => {
   const { gameId } = useParams();  // Get gameId from the URL
   const [game, setGame] = useState(null);
+  const [scoreData, setScoreData] = useState({});
 
   useEffect(() => {
     // Fetch game details
@@ -37,13 +38,30 @@ const GameDetail = () => {
       });
   };
 
-  const handleUpvote = () => {
-    axios.post(`http://localhost:8000/games/${gameId}/upvote`)
+  const handleScoreChange = (contestantId, value) => {
+    setScoreData(prevState => ({
+      ...prevState,
+      [contestantId]: value
+    }));
+  };
+
+  const handleScoreSubmit = (contestantId, score) => {
+    if (!score) {
+      alert("Please enter a valid score.");
+      return;
+    }
+
+    axios.post("http://localhost:8000/scores/", {
+      game_id: gameId,
+      contestant_id: contestantId,
+      score: score
+    })
       .then(response => {
-        setGame(prevGame => ({ ...prevGame, upvotes: prevGame.upvotes + 1 }));
+        console.log("Score assigned successfully", response.data);
+        setScoreData(prevState => ({ ...prevState, [contestantId]: "" }));  // Reset score after submitting
       })
       .catch(error => {
-        console.error("There was an error upvoting the game!", error);
+        console.error("There was an error assigning the score!", error);
       });
   };
 
@@ -58,7 +76,22 @@ const GameDetail = () => {
       <p>Contestants:</p>
       <ul>
         {game.contestants.map((contestant) => (
-          <li key={contestant.id}>{contestant.name}</li>
+          <li key={contestant.id}>
+            {contestant.name}
+            {game.start_time && !game.end_time && (
+              <div>
+                <input
+                  type="number"
+                  value={scoreData[contestant.id] || ""}
+                  onChange={(e) => handleScoreChange(contestant.id, e.target.value)}
+                  placeholder="Enter score"
+                />
+                <button onClick={() => handleScoreSubmit(contestant.id, scoreData[contestant.id])}>
+                  Submit Score
+                </button>
+              </div>
+            )}
+          </li>
         ))}
       </ul>
 
@@ -69,7 +102,6 @@ const GameDetail = () => {
           ) : (
             <>
               <button onClick={handleEndGame}>End Game</button>
-              <button onClick={handleUpvote}>Upvote Game</button>
             </>
           )}
         </div>
