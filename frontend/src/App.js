@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import ContestantCreate from './pages/ContestantCreate';
 import EditContestant from './pages/EditContestant';
 import ContestantsList from './pages/ContestantsList';
@@ -45,6 +45,7 @@ const App = () => {
         </nav>
 
         <Routes>
+          <Route path="/" element={<Navigate to="/contestants" />} />
           {/* Contestant Routes */}
           <Route path="/contestants" element={<ContestantsList />} />
           <Route path="/contestants/create" element={<ContestantCreate />} />
