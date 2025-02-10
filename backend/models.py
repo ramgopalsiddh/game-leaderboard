@@ -14,7 +14,7 @@ class Contestant(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now)
 
 class Game(Base):
     __tablename__ = "games"
@@ -33,4 +33,4 @@ class Score(Base):
     game_id = Column(Integer, ForeignKey("games.id"))
     contestant_id = Column(Integer, ForeignKey("contestants.id"))
     score = Column(Integer, default=0)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=datetime.now)
