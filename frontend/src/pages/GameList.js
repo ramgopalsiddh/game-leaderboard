@@ -18,7 +18,7 @@ const GameList = () => {
   }, []);
 
   return (
-    <div className="container">
+    <div className="gamecontainer">
       <div className="gamelist-list-container">
         <h1 className="header">Game List</h1>
         <ul className="gamelist-list">
