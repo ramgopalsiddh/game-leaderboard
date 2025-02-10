@@ -24,7 +24,10 @@ Make sure you have the following installed on your system:
 
 press `CTRL+C` in the terminal running the script.
 
+---
+### Backend API (FASTAPI) Routes
 
+ See all backend routes :-  [http://127.0.0.1:8000/docs#/](http://127.0.0.1:8000/docs#/)  
 ---
 ---
 ## Demo Video
