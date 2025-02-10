@@ -205,7 +205,7 @@ def update_popularity_score(db: Session):
     yesterday = datetime.now() - timedelta(days=1)
     # Dynamic calculations for max values    
     max_w1 = db.query(Score.game_id).filter(Score.timestamp >= yesterday).distinct().count()
-    max_w2 = db.query(Score.game_id).filter(Score.timestamp >= datetime.utcnow()).distinct().count()
+    max_w2 = db.query(Score.game_id).filter(Score.timestamp >= datetime.now()).distinct().count()
     max_w3 = db.query(func.max(Game.upvotes)).scalar() or 1
     max_w4 = db.query(func.max(func.julianday(Game.end_time) - func.julianday(Game.start_time))).filter(Game.start_time >= yesterday).scalar() or 1
     max_w5 = db.query(Score.game_id).filter(Score.timestamp >= yesterday).distinct().count() or 1
@@ -216,7 +216,7 @@ def update_popularity_score(db: Session):
     for game in games:
         # Calculate w1, w2, w3, w4, w5 for each game
         w1 = db.query(Score).filter(Score.game_id == game.id, Score.timestamp >= yesterday).count()
-        w2 = db.query(Score).filter(Score.game_id == game.id, Score.timestamp >= datetime.utcnow()).count()
+        w2 = db.query(Score).filter(Score.game_id == game.id, Score.timestamp >= datetime.now()).count()
         w3 = game.upvotes
         w4 = (db.query(func.julianday(game.end_time) - func.julianday(game.start_time)).scalar() or 0) if game.start_time and game.end_time else 0
         w5 = db.query(Score).filter(Score.game_id == game.id, Score.timestamp >= yesterday).count()
@@ -229,5 +229,8 @@ def update_popularity_score(db: Session):
             0.15 * (w4 / max_w4 if max_w4 else 1) +
             0.1 * (w5 / max_w5 if max_w5 else 1)
         )
+
+        game.popularity_score = round(game.popularity_score, 2)
+
     db.commit()
 
