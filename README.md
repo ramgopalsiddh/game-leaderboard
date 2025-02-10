@@ -24,7 +24,6 @@ Make sure you have the following installed on your system:
 
 press `CTRL+C` in the terminal running the script.
 
-https://youtu.be/6oI8oCV7T1s
 
 ---
 ---
