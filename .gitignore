@@ -1,0 +1,55 @@
+
+# Node artifact files
+node_modules/
+dist/
+
+# Compiled Java class files
+*.class
+
+# Compiled Python bytecode
+*.py[cod]
+
+# Log files
+*.log
+
+# Package files
+*.jar
+
+# Maven
+target/
+dist/
+
+# JetBrains IDE
+.idea/
+
+# Unit test reports
+TEST*.xml
+
+# Applications
+*.app
+*.exe
+*.war
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
+
+# Ignore virtual environments
+venv/
+backend/*.env
+
+#whisper logs
+logs/
+
+# Ignore large or binary files
+*.tar.gz
+*.zip
+*.egg-info/
+*.pyc
+__pycache__/
+
+*.db
