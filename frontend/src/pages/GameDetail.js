@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import '../styles/GameDetail.css';
+import {BASE_URL} from '../constants';
 
 const GameDetail = () => {
   const { gameId } = useParams();
@@ -10,7 +11,7 @@ const GameDetail = () => {
 
   useEffect(() => {
     // Fetch game details
-    axios.get(`http://localhost:8000/games/${gameId}`)
+    axios.get(`${BASE_URL}/games/${gameId}`)
       .then(response => {
         setGame(response.data);
       })
@@ -20,7 +21,7 @@ const GameDetail = () => {
   }, [gameId]);
 
   const handleStartGame = () => {
-    axios.post(`http://localhost:8000/games/${gameId}/start`)
+    axios.post(`${BASE_URL}/games/${gameId}/start`)
       .then(response => {
         setGame(prevGame => ({ ...prevGame, start_time: new Date() }));
       })
@@ -30,7 +31,7 @@ const GameDetail = () => {
   };
 
   const handleEndGame = () => {
-    axios.post(`http://localhost:8000/games/${gameId}/end`)
+    axios.post(`${BASE_URL}/games/${gameId}/end`)
       .then(response => {
         setGame(prevGame => ({ ...prevGame, end_time: new Date() }));
       })
@@ -52,7 +53,7 @@ const GameDetail = () => {
       return;
     }
 
-    axios.post("http://localhost:8000/scores/", {
+    axios.post(`${BASE_URL}/scores/`, {
       game_id: gameId,
       contestant_id: contestantId,
       score: score
@@ -67,7 +68,7 @@ const GameDetail = () => {
   };
 
   const handleUpvote = () => {
-    axios.post(`http://localhost:8000/games/${gameId}/upvote`)
+    axios.post(`${BASE_URL}/games/${gameId}/upvote`)
       .then(response => {
         setGame(prevGame => ({ ...prevGame, upvotes: prevGame.upvotes + 1 }));
       })

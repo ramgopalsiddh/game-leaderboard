@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "../styles/ContestantsList.css";
+import {BASE_URL} from '../constants';
 
 function ContestantsList() {
   const [contestants, setContestants] = useState([]);
@@ -9,7 +10,7 @@ function ContestantsList() {
   useEffect(() => {
     // Fetch the contestants from the FastAPI backend
     axios
-      .get("http://localhost:8000/allcontestants")
+      .get(`${BASE_URL}/allcontestants`)
       .then((response) => setContestants(response.data))
       .catch((error) => console.error("There was an error fetching contestants:", error));
   }, []);
@@ -17,7 +18,7 @@ function ContestantsList() {
   const deleteContestant = (contestantId) => {
     if (window.confirm("Are you sure you want to delete this contestant?")) {
       axios
-        .delete(`http://localhost:8000/contestants/${contestantId}`)
+        .delete(`${BASE_URL}/contestants/${contestantId}`)
         .then(() => {
           setContestants(contestants.filter((contestant) => contestant.id !== contestantId));
         })

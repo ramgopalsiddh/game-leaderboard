@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/PopularityPage.css"; // Import CSS
+import {BASE_URL} from '../constants';
 
 const PopularityPage = () => {
   const [games, setGames] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/popularity/")
+    axios.get(`${BASE_URL}/popularity/`)
       .then(response => {
         setGames(response.data);
       })

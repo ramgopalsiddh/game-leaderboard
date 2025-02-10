@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import '../styles/ContestantCreate.css';
+import {BASE_URL} from '../constants';
 
 function ContestantCreate() {
   const [name, setName] = useState("");
@@ -11,7 +12,7 @@ function ContestantCreate() {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .post("http://localhost:8000/contestants/", { name, email })
+      .post(`${BASE_URL}/contestants/`, { name, email })
       .then(() => {
         navigate("/contestants");
       })

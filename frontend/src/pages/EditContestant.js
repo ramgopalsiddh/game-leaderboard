@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/EditContestant.css"; 
+import {BASE_URL} from '../constants';
 
 function EditContestant() {
   const { contestantId } = useParams();
@@ -10,7 +11,7 @@ function EditContestant() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/contestants/${contestantId}`)
+      .get(`${BASE_URL}/contestants/${contestantId}`)
       .then((response) => {
         console.log(response.data); // Log the data returned
         setContestant(response.data);
@@ -26,7 +27,7 @@ function EditContestant() {
   const handleSubmit = (event) => {
     event.preventDefault();
     axios
-      .put(`http://localhost:8000/contestants/${contestantId}`, contestant)
+      .put(`${BASE_URL}/contestants/${contestantId}`, contestant)
       .then(() => navigate('/contestants'))
       .catch((error) => console.error("There was an error updating the contestant:", error));
   };

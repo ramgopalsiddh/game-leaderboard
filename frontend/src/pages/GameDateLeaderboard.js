@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/GameDateLeaderboard.css";
+import {BASE_URL} from '../constants';
 
 const GameDateLeaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
 
   useEffect(() => {
     // Fetch leaderboard data for all games and all dates
-    axios.get("http://localhost:8000/leaderboard")
+    axios.get(`${BASE_URL}/leaderboard`)
       .then(response => {
         setLeaderboard(response.data);
       })

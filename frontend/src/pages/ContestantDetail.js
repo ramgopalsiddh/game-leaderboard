@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import '../styles/ContestantDetail.css';
+import {BASE_URL} from '../constants';
 
 function ContestantDetail() {
   const { id } = useParams();
@@ -11,7 +12,7 @@ function ContestantDetail() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/contestants/${id}`)
+      .get(`${BASE_URL}/contestants/${id}`)
       .then((response) => {
        // console.log("Contestant data:", response.data);
         setContestant(response.data);
@@ -26,7 +27,7 @@ function ContestantDetail() {
 
   const fetchActiveGames = () => {
     axios
-      .get("http://localhost:8000/games/active")
+      .get(`${BASE_URL}/games/active`)
       .then((response) => {
        // console.log("Active games data:", response.data);
         setGames(response.data);
@@ -40,7 +41,7 @@ function ContestantDetail() {
 
   const handleEnterGame = (gameId) => {
     axios
-      .post(`http://localhost:8000/games/${gameId}/contestants/${id}/enter`)
+      .post(`${BASE_URL}/games/${gameId}/contestants/${id}/enter`)
       .then((response) => {
         alert(response.data.message);
         fetchActiveGames();
@@ -50,7 +51,7 @@ function ContestantDetail() {
 
   const handleExitGame = (gameId) => {
     axios
-      .post(`http://localhost:8000/games/${gameId}/contestants/${id}/exit`)
+      .post(`${BASE_URL}/games/${gameId}/contestants/${id}/exit`)
       .then((response) => {
         alert(response.data.message);
         fetchActiveGames();

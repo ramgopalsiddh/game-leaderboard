@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import '../styles/GameList.css';
+import {BASE_URL} from '../constants';
 
 const GameList = () => {
   const [games, setGames] = useState([]);
 
   useEffect(() => {
     // Fetch all games
-    axios.get("http://localhost:8000/games")
+    axios.get(`${BASE_URL}/games`)
       .then(response => {
         setGames(response.data);
       })

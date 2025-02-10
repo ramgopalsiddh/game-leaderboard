@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import '../styles/AddGame.css';
+import {BASE_URL} from '../constants';
 
 const AddGame = () => {
   const [name, setName] = useState("");
@@ -13,7 +14,7 @@ const AddGame = () => {
     const newGame = { name, description };
 
     try {
-      await axios.post("http://localhost:8000/games/", newGame);
+      await axios.post(`${BASE_URL}/games/`, newGame);
       navigate("/games");
     } catch (error) {
       console.error("Error adding game:", error);
